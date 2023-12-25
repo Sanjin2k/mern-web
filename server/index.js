@@ -12,7 +12,20 @@ const app = express();
 
 app.use(express.json({extended: true}))
 app.use(express.urlencoded({extended: true}))
-app.use(cors({credentials: true, origin: "*"}))
+const corsOptions = {
+    credentials: true,
+    origin: (origin, callback) => {
+      // Check if the origin is allowed
+      const allowedOrigins = ['https://effortless-moonbeam-fd6d67.netlify.app'];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  };
+
+app.use(cors(corsOptions));
 app.use(upload())
 app.use('/uploads', express.static(__dirname + '/uploads'))
 
